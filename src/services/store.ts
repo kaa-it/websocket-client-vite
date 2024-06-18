@@ -1,12 +1,20 @@
 import {combineReducers} from "redux";
-import {liveTableSlice, wsClose, wsConnecting, wsError, wsMessage, wsOpen} from "./live-table/slice.ts";
-import {configureStore} from "@reduxjs/toolkit";
+import {
+    liveTableSlice,
+    TWsInternalActions,
+    wsClose,
+    wsConnecting,
+    wsError,
+    wsMessage,
+    wsOpen
+} from "./live-table/slice.ts";
+import {configureStore, ThunkDispatch} from "@reduxjs/toolkit";
 import {
     useDispatch as dispatchHook,
     useSelector as selectorHook,
 } from "react-redux";
 import {socketMiddleware} from "./middleware/socket-middleware.ts";
-import {wsConnect, wsDisconnect} from "./live-table/actions.ts";
+import {TWsExternalActions, wsConnect, wsDisconnect} from "./live-table/actions.ts";
 
 const rootReducer = combineReducers({
     [liveTableSlice.reducerPath]: liveTableSlice.reducer
@@ -29,8 +37,10 @@ export const store = configureStore({
     }
 });
 
+type TApplicationActions = TWsExternalActions | TWsInternalActions;
+
 export type RootState = ReturnType<typeof rootReducer>;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = ThunkDispatch<RootState, unknown, TApplicationActions>;
 
 export const useDispatch = dispatchHook.withTypes<AppDispatch>()
 export const useSelector = selectorHook.withTypes<RootState>()

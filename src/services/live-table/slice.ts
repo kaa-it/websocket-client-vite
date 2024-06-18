@@ -43,3 +43,5 @@ export const liveTableSlice = createSlice({
 
 export const {wsConnecting, wsOpen, wsClose, wsError, wsMessage} = liveTableSlice.actions;
 export const { getLiveTable, getWebsocketStatus } = liveTableSlice.selectors;
+
+export type TWsInternalActions = ReturnType<typeof liveTableSlice.actions[keyof typeof liveTableSlice.actions]>;

@@ -11,7 +11,7 @@ const App = () => {
     const dispatch = useDispatch();
     const table = useSelector(getLiveTable);
     const status = useSelector(getWebsocketStatus);
-    const isDisconnected = status !== WebsocketStatus.ONLINE
+    const isDisconnected = status !== WebsocketStatus.ONLINE;
 
     let className = 'app__status';
     switch (status) {

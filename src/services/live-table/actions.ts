@@ -5,3 +5,5 @@ export const wsConnect = createAction<string, "LIVE_TABLE_CONNECT">(
 );
 
 export const wsDisconnect = createAction("LIVE_TABLE_DISCONNECT");
+
+export type TWsExternalActions = ReturnType<typeof wsConnect> | ReturnType<typeof wsDisconnect>;
