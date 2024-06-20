@@ -57,28 +57,33 @@ export const socketMiddleware = (
 
                 socket.onmessage = (event) => {
                     const { data } = event;
-                    const parsedData = JSON.parse(data);
 
-                    if (withTokenRefresh && parsedData.message === "Invalid or missing token") {
-                        // refreshToken()
-                        //     .then(refreshData => {
-                        //         const wssUrl = new URL(url);
-                        //         wssUrl.searchParams.set(
-                        //             "token",
-                        //             refreshData.accessToken.replace("Bearer ", "")
-                        //         );
-                        //         dispatch({type: wsConnect, payload: wssUrl});
-                        //     })
-                        //     .catch(err => {
-                        //         dispatch(onError(err.message))
-                        //     });
-                        //
-                        // dispatch(wsDisconnect());
+                    try {
+                        const parsedData = JSON.parse(data);
 
-                        return;
+                        if (withTokenRefresh && parsedData.message === "Invalid or missing token") {
+                            // refreshToken()
+                            //     .then(refreshData => {
+                            //         const wssUrl = new URL(url);
+                            //         wssUrl.searchParams.set(
+                            //             "token",
+                            //             refreshData.accessToken.replace("Bearer ", "")
+                            //         );
+                            //         dispatch({type: wsConnect, payload: wssUrl});
+                            //     })
+                            //     .catch(err => {
+                            //         dispatch(onError((error as {message: string}).message));
+                            //     });
+                            //
+                            // dispatch(wsDisconnect());
+
+                            return;
+                        }
+
+                        dispatch(onMessage(parsedData));
+                    } catch (error) {
+                        dispatch(onError((error as {message: string}).message));
                     }
-
-                    dispatch(onMessage(parsedData));
                 };
 
                 socket.onclose = () => {
@@ -93,7 +98,11 @@ export const socketMiddleware = (
             }
 
             if (socket && sendMessage?.match(action)) {
-                socket.send(JSON.stringify(action.payload));
+                try {
+                    socket.send(JSON.stringify(action.payload));
+                } catch (error) {
+                    dispatch(onError((error as {message: string}).message));
+                }
             }
 
             if (socket && disconnect.match(action)) {
